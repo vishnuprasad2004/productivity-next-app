@@ -21,10 +21,10 @@ export default function ToDoList() {
 
     function add() {
         const id = todos.length + 1
-        if(input.includes("-p")) {
+        if (input.includes("-p")) {
             // alert("ddkdjkd")
             setPriority(true)
-            setInput(input.replace("-p",""))
+            setInput(input.replace("-p", ""))
         }
         setTodos((prev) => [
             ...prev,
@@ -36,6 +36,7 @@ export default function ToDoList() {
             },
         ])
         setInput("")
+        setPriority(false)
     }
 
 
@@ -43,17 +44,38 @@ export default function ToDoList() {
         setTodos([])
     }
 
+    const handleComplete = (id:number) => {
+        let list = todos.map((task) => {
+          let item = {};
+          if (task.id == id) {
+            if (!task.completed){
+                //Task is pending, modifying it to complete and increment the count
+                setCompletedTasks(completedTasks + 1);
+            } 
+            else {
+                //Task is complete, modifying it back to pending, decrement Complete count
+                setCompletedTasks(completedTasks - 1);
+            }
+    item = { ...task, completed: !task.completed };
+          } else item = { ...task };
+    return item;
+        });
+        // @ts-ignore
+        setTodos(list);
+      };
+
     return (
 
         <Card className=''>
-            <CardHeader className='mb-0 pb-0'>
+            <CardHeader className='mb-0 pb-0 gap-4'>
                 <h1>Add your Todos</h1>
+                <Chip color="success" variant="faded" size='sm'>{completedTasks}</Chip>
             </CardHeader>
             <CardBody>
                 <div className='flex gap-2'>
                     <Input
                         value={input}
-                        onKeyDown={(e) => { if(e.key == "Enter") add() }}
+                        onKeyDown={(e) => { if (e.key == "Enter") add() }}
                         onChange={(e) => setInput(e.target.value)}
                         size='sm'
                         labelPlacement='outside-left'
@@ -74,7 +96,7 @@ export default function ToDoList() {
                         size='sm'
                         // color='danger'
                         // variant='ghost'
-                        className='bg-rose-500 hover:bg-rose-600'
+                        className='hover:text-rose-500'
                         aria-label='clear all'
                         onClick={deleteAll}
                     >Clear All
@@ -86,11 +108,13 @@ export default function ToDoList() {
                         return (
                             <>
                                 <Checkbox
-                                // isSelected={todo.completed} onValueChange={setTodos()}
-                                onValueChange={e => setCompletedTasks(completedTasks+1)}
+                                    isSelected={todo.completed} 
+                                    // onValueChange={setTodos()}
+                                    key={todo.id}
+                                    onValueChange={e => handleComplete(todo.id)}
                                 >
                                     {todo.task}
-                                    {todo.hasPriority ? <Chip size='sm' color='secondary' className='ml-1 p-1 text-xs'>priority</Chip>:<></>}
+                                    {todo.hasPriority ? <Chip size='sm' color='secondary' className='ml-1 p-1 text-xs'>priority</Chip> : <></>}
                                 </Checkbox>
                             </>
                         )

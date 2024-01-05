@@ -1,13 +1,15 @@
 "use client";
 
 import { Button } from '@nextui-org/button';
-import { useState } from 'react';
-import { Input, Navbar, NavbarContent, NavbarItem } from '@nextui-org/react';
+import { Navbar, NavbarContent, NavbarItem } from '@nextui-org/react';
 import ToDoList from '@/components/ToDoList';
 import Notepad from '@/components/Notepad';
-import Link from 'next/link';
-import Clock from '@/components/Clock';
-import PDFReader from '@/components/PDFReader';
+import dynamic from 'next/dynamic';
+
+const PDFReader = dynamic((() => import("@/components/PDFReader")), { ssr: false })
+const Pomodoro = dynamic((() => import("@/components/Pomodoro")), { ssr: false })
+const Clock = dynamic(() => import("@/components/Clock"), { ssr: false })
+
 
 export default function Dashboard() {
 
@@ -21,15 +23,13 @@ export default function Dashboard() {
                 </NavbarContent>
                 <NavbarContent justify='end'>
                     <NavbarItem><Clock></Clock></NavbarItem>
+                    <NavbarItem><Pomodoro></Pomodoro></NavbarItem>
                 </NavbarContent>
             </Navbar>
-            <main className="overflow-hidden p-5 w-full h-full flex flex-row gap-6">
+            <main className="overflow-hidden p-5 flex flex-row gap-6 w-full h-full">
                 <div className='flex flex-col w-2/6 gap-6'>
                     <Notepad></Notepad>
                     <ToDoList></ToDoList>
-                    <Input
-                        type="file"
-                    />
                 </div>
                 <div className=''>
                     <PDFReader></PDFReader>
